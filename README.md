@@ -1,5 +1,5 @@
 # WingPose
-Pose estimation of insect wings
+Pose estimation of insect wings using deep learning.
 
 Prototype:
 
