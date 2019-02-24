@@ -1,14 +1,14 @@
 # WingPose
 Pose estimation of insect wings using deep learning.
 
-Prototype:
+## Prototype
 
 ![Prototype](images/5prototype_img1.png)
 
-Current examples:
+## Current examples
 
 ![Examples](images/pose_set2.png)
 
-Final Goal:
+## Final Goal
 
 ![Goal](images/wingpose.png)
