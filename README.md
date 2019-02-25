@@ -1,5 +1,5 @@
 # WingPose
-Pose estimation of mosquito wings using deep learning. Using an autoencoder architecture, heatmaps can be generated from the image to give the location of keypoints used in the measurement of the wing.
+Pose estimation of mosquito wings with deep learning. Using an autoencoder architecture, heatmaps can be generated from the image to give the location of keypoints used in the measurement of the wing.
 
 ### Prototype
 
