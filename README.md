@@ -1,5 +1,5 @@
 # WingPose
-Pose estimation of mosquito wings with deep learning. Using an autoencoder architecture, heatmaps can be generated from the image to give the location of keypoints used in the measurement of the wing.
+Pose estimation of mosquito wings with deep learning. Using an autoencoder architecture, heatmaps can be generated from the image to give the location of keypoints used in the measurement wings.
 
 ### Prototype
 
@@ -14,7 +14,7 @@ Pose estimation of mosquito wings with deep learning. Using an autoencoder archi
 ![Goal](images/wingpose.png)
 
 ## Dataset
-The dataset was created from a lab interested in the development of adult mosquitos. Currently 8 x,y coordinate values are used for the in the dataset. In the future the perimiter or area of the wing will be included. A link to the set of images will be included shortly.
+The dataset was created from a lab interested in the development of adult mosquitos. Currently 8 x,y coordinate values are used for the dataset. In the future the perimiter or area of the wing will be included as a contour or object pixel classification. A link to the set of images will be included shortly.
 
 ### Order of keypoints
 
@@ -27,3 +27,12 @@ Points</br>
 6:</br>
 7:</br>
 8:</br>
+
+## Things To Do
+- Finish keypoint labels
+- Robust image augmentations for the dataset
+  * Decide between offline and online augments
+- Labeling for wing contour or segmentation
+- Improve model architecture
+  * Posenet, Res-net, Dense net
+  * One network for keypoints and contour detection?
