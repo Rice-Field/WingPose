@@ -34,5 +34,5 @@ Points</br>
   * Decide between offline and online augments
 - Labeling for wing contour or segmentation
 - Improve model architecture
-  * Posenet, Res-net, Dense net
+  * Posenet, ResNet, DenseNet
   * One network for keypoints and contour detection?
