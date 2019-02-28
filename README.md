@@ -38,10 +38,10 @@ Points</br>
   * One network for keypoints and contour detection?
 
 ## Steps
-- Label with [imglab.ml](imglab.ml)
-- Convert xml file to csv with xml2csv.py
-  * json files will be used for contour polygons
-- Use heatmap.py to generate GT labels for keypoints
-- imgdata.py to store all images as a numpy array
-- Train with autoencoder.py and save weights
-- Run hm2pose.py to interpret heatmaps to keypoints and display poses
+1. Label with [imglab.ml](imglab.ml)
+2. Convert xml file to csv with xml2csv.py</br>
+  &nbsp;&nbsp;- json files will be used for contour polygons</br>
+3. Use heatmap.py to generate GT labels for keypoints
+4. imgdata.py to store all images as a numpy array
+5. Train with autoencoder.py and save weights
+6. Run hm2pose.py to interpret heatmaps to keypoints and display poses
