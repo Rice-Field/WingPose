@@ -19,14 +19,14 @@ The dataset was created from a lab interested in the development of adult mosqui
 ### Order of keypoints
 
 Points</br>
-1:</br>
-2:</br>
-3:</br>
-4:</br>
-5:</br>
-6:</br>
-7:</br>
-8:</br>
+1: </br>
+2: </br>
+3: </br>
+4: </br>
+5: </br>
+6: </br>
+7: </br>
+8: </br>
 
 ## Things To Do
 - Finish keypoint labels
@@ -36,3 +36,12 @@ Points</br>
 - Improve model architecture
   * PoseNet, ResNet, DenseNet
   * One network for keypoints and contour detection?
+
+## Steps
+- Label with [imglab.ml](imglab.ml)
+- Convert xml file to csv with xml2csv.py
+  * json files will be used for contour polygons
+- Use heatmap.py to generate GT labels for keypoints
+- imgdata.py to store all images as a numpy array
+- Train with autoencoder.py and save weights
+- Run hm2pose.py to interpret heatmaps to keypoints and display poses
