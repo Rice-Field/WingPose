@@ -50,9 +50,8 @@ files = data[name]
 polygons = X.values.tolist()
 filenames = files.values.tolist()
 
-print(len(polygons))
-
-for z in range(162, len(polygons)):
+hm = np.zeros((len(polygons), nimg_h, nimg_w), dtype=np.float32)
+for z in range(len(polygons)):
 
     poly = polygons[z]
 
@@ -95,62 +94,53 @@ for z in range(162, len(polygons)):
 
     # print(contourList)
 
-    hm = np.zeros((nimg_h, nimg_w), dtype=np.float32)
-
     for i in range(0, len(contourList)):
         y = contourList[i][1]
         x = contourList[i][0]
-        hm[y][x] = 255
+        hm[z][y][x] = 255
 
 
-    # plt.show()
-    # index = -1
-    # for n in range(len(parsed_json["images"])):
-    #     if parsed_json["annotations"][z]["image_id"] == parsed_json["images"][n]["id"]:
-    #         index = n
-    #     break
-    # path = os.path.join('./pics/', parsed_json["images"][parsed_json["annotations"][z]["image_id"]-1]["file_name"])
-    # path = os.path.join('./pics/', parsed_json["images"][index]["file_name"])
-    path = os.path.join('./pics/', filenames[z][0])
-    wingImage = Image.open(path)
-    wingImage = wingImage.convert("L")
-    wingImage = wingImage.resize((128, 128), Image.ANTIALIAS)
-    wingImage = np.asarray(wingImage)
+    # path = os.path.join('./pics/', filenames[z][0])
+    # wingImage = Image.open(path)
+    # wingImage = wingImage.convert("L")
+    # wingImage = wingImage.resize((128, 128), Image.ANTIALIAS)
+    # wingImage = np.asarray(wingImage)
 
     # plt.imshow(wingImage)
     #
-    finished = wingImage + hm
+    # finished = wingImage + hm[z]
     
     # hmimg = Image.fromarray(hm).convert('RGB')
     # hmimg.save("./contours/id"+ str(parsed_json["annotations"][z]["image_id"]) + ".png")
-    plt.imshow(finished)
-    plt.tight_layout()
-    plt.savefig("./contours/id" + filenames[z][0])
-    print(z)
-    # plt.show()
-
     # plt.imshow(finished)
+    # plt.tight_layout()
+    # plt.savefig("./contours/id" + filenames[z][0])
     # plt.show()
 
-    # sigma = 3
-    # hm = np.zeros((nimg_h, nimg_w), dtype=np.float32)
+    sigma = 2
+    var = np.zeros((nimg_h, nimg_w), dtype=np.float32)
+    hms = np.zeros((nimg_h, nimg_w), dtype=np.float32)
 
-    # for i in range(len(contourList)):
-    #     y0 = contourList[i][1]
-    #     x0 = contourList[i][0]
+    for i in range(len(contourList)):
+        y0 = contourList[i][1]
+        x0 = contourList[i][0]
 
-    #     var = pow(np.e, (-((xmap-x0)**2 + (ymap-y0)**2)/(2*sigma*sigma))) / (math.sqrt(2*np.pi)*sigma)
-    #     hm[:][hm < var] = var[hm < var]
+        var = pow(np.e, (-((xmap-x0)**2 + (ymap-y0)**2)/(2*sigma*sigma))) / (math.sqrt(2*np.pi)*sigma)
+        hms[:][hms < var] = var[hms < var]
 
-    # hm = normalize(hm)
+    hm[z] = np.copy(normalize(hms))
 
     # visualize in image
-    # hm *= 255
+    # hm[z] *= 255
 
-
-    # plt.imshow(hm)
+    # plt.imshow(var)
+    # plt.imshow(hm[z])
     # plt.show()
 
-    # finished = wingImage + hm
+    # finished = wingImage + hm[z]
     # plt.imshow(finished)
     # plt.show()
+    # break
+
+    print(z)
+np.save("contourHM_128_s2", hm)
