@@ -14,7 +14,7 @@ from PIL import Image, ImageFile
 # better?: find center of each density
 
 # Load our data
-path = 'truewing.csv'
+path = 'truewing2.csv'
 data = pd.read_csv(path)
 points = ['x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4', 'x5', 'y5',
                  'x6', 'y6', 'x7', 'y7', 'x8', 'y8']
@@ -24,11 +24,13 @@ files = data[name]
 numdata = X.values.tolist()
 filenames = files.values.tolist()
 
-# imgdata = np.load("AugimgdataC_256.npy")
-imgdata = np.load("imgdataC_256-3.npy")
+imgdata = np.load("imgdataPoly_256-3.npy")
+# imgdata = np.load("contourImg.npy")
 # hm = np.load("heatmap8_s1_64.npy")
-# hm = np.load("trainhm.npy")
-hm = np.load("./output/testhm128-2.npy")
+hm = np.load("./output/testhmC.npy")
+# hm = np.load("./output/testhmR2.npy")
+# hm = np.load("contour_s3_128.npy")
+# hm = np.load("./output/testhmRes4.npy")
 
 def distance(pt1, pt2):
 	return math.sqrt( (pt2[0] - pt1[0])**2 + (pt2[1] - pt1[1])**2 )
@@ -55,6 +57,40 @@ def anglebetween(p0, p1, p2):
 	b = (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
 	c = (p2[0]-p0[0])**2 + (p2[1]-p0[1])**2
 	return math.acos( (a+b-c) / math.sqrt(4*a*b) ) * 180/math.pi
+
+def avgdensity(hm):
+	n_points = 4
+	avgx = 0
+	avgy = 0
+	for i in range(n_points):
+		# print(np.max(hm))
+		index = maxpoint(hm)
+		avgx += index[0]
+		avgy += index[1]
+		hm[index[0]][index[1]] = 0
+
+	avgx /= n_points
+	avgy /= n_points
+
+	return [avgx, avgy]
+
+def findDensityJoints(hm8):
+	joints = np.zeros((8,2), dtype=int)
+
+	for i in range(8):
+		index = avgdensity(hm8[:,:,i])
+
+		# joints[i,0] = int(index[1] / 64 * 256) # x
+		# joints[i,1] = int(index[0] / 64 * 256) # y
+		# joints[i,0] = int(index[1] / 64 * 1600) # x
+		# joints[i,1] = int(index[0] / 64 * 1200) # y
+
+		joints[i,0] = int(index[1] / 128 * 256) # x
+		joints[i,1] = int(index[0] / 128 * 256) # y
+		# joints[i,0] = int(index[1] / 128 * 1600) # x
+		# joints[i,1] = int(index[0] / 128 * 1200) # y
+
+	return joints
 
 # find max points and store in a array
 def maxpoint(hm1):
@@ -98,35 +134,61 @@ def drawjoints(img, joints):
 
 	return img
 
-
+images = np.zeros((10,256,256,3))
 allmeasures = []
-for i in range(20):
+for i in range(10):
 	measure = []
-	# img = cv.imread(('./pics/' + filenames[i+181][0]),cv.IMREAD_COLOR)
+	# img = cv.imread(('./pics/' + filenames[i+288][0]),cv.IMREAD_COLOR)
 	# img = cv.imread(('./pics/' + filenames[i][0]),cv.IMREAD_COLOR)
-	# img = np.copy(imgdata[i+180])
-	img = np.copy(imgdata[i])
-	measure.append(filenames[i][0])
+	img = np.copy(imgdata[i+288])
+	# img = np.copy(imgdata[i])
+	# measure.append(filenames[i][0])
 
-	joints = findJoints(np.copy(hm[i]))
+	joints = findDensityJoints(np.copy(hm[i,:,:,0:8]))
 	# print(joints)
-	measure.append(distance(joints[0],joints[7]))
-	measure.append(0)
-	measure.append(distance(joints[1],joints[2]))
-	measure.append(0)
-	# measure.append(anglebetween(joints[2],joints[1],joints[3]))
-	measure.append(distance(joints[4],joints[5]))
-	measure.append(0)
+	# measure.append(distance(joints[0],joints[7]))
+	# measure.append(0)
+	# measure.append(distance(joints[1],joints[2]))
+	# measure.append(0)
+	# # measure.append(anglebetween(joints[2],joints[1],joints[3]))
+	# measure.append(distance(joints[4],joints[5]))
+	# measure.append(0)
 	# measure.append(anglebetween(joints[2],joints[1],joints[3]))
 
 	img = drawjoints(img, joints)
 
-	plt.imshow(img.astype(np.uint8))
-	plt.show()
+	cont = np.copy(hm[i,:,:,8])
+	cont[:][cont < .6] = 0
+	cont = Image.fromarray(cont)
+	cont = cont.resize((256,256), Image.ANTIALIAS)
+	cont = np.asarray(cont) * 255
 
-	allmeasures.append(measure)
+	img[:,:,1] += cont
 
-column_name = ['filename', 'Major', 'Minor', 'Length 1', 'Angle 1', 'Length 2', 'Angle 2']
-data = pd.DataFrame(allmeasures, columns=column_name)
-data.to_csv('measurements.csv', index=None)
-print('Successfully created csv.')
+	images[i] = np.copy(img)
+
+	# plt.imshow(hm[i,:,:,8])
+	# plt.show()
+	# break
+
+	# for j in range(8):
+	# 	plt.imshow(hm[0,:,:,j])
+	# 	plt.show()
+
+
+	# allmeasures.append(measure)
+
+# column_name = ['filename', 'Major', 'Minor', 'Length 1', 'Angle 1', 'Length 2', 'Angle 2']
+# data = pd.DataFrame(allmeasures, columns=column_name)
+# data.to_csv('measurements.csv', index=None)
+# print('Successfully created csv.')
+
+fig = plt.figure(figsize=(256,256))
+columns = 5
+rows = 2
+for j in range(1, 11):
+    fig.add_subplot(rows, columns, j)
+    plt.axis('off')
+    plt.imshow(images[j-1].astype(np.uint8))
+fig.tight_layout()
+plt.show()
