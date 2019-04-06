@@ -27,7 +27,7 @@ filenames = files.values.tolist()
 imgdata = np.load("imgdataPoly_256-3.npy")
 # imgdata = np.load("contourImg.npy")
 # hm = np.load("heatmap8_s1_64.npy")
-hm = np.load("./output/testhmC.npy")
+hm = np.load("./output/testhmC2.npy")
 # hm = np.load("./output/testhmR2.npy")
 # hm = np.load("contour_s3_128.npy")
 # hm = np.load("./output/testhmRes4.npy")
@@ -75,20 +75,20 @@ def avgdensity(hm):
 	return [avgx, avgy]
 
 def findDensityJoints(hm8):
-	joints = np.zeros((8,2), dtype=int)
+	joints = np.zeros((9,2), dtype=int)
 
 	for i in range(8):
 		index = avgdensity(hm8[:,:,i])
 
-		# joints[i,0] = int(index[1] / 64 * 256) # x
-		# joints[i,1] = int(index[0] / 64 * 256) # y
-		# joints[i,0] = int(index[1] / 64 * 1600) # x
-		# joints[i,1] = int(index[0] / 64 * 1200) # y
+		# joints[i,0] = round(index[1] / 64 * 256) # x
+		# joints[i,1] = round(index[0] / 64 * 256) # y
+		# joints[i,0] = round(index[1] / 64 * 1600) # x
+		# joints[i,1] = round(index[0] / 64 * 1200) # y
 
-		joints[i,0] = int(index[1] / 128 * 256) # x
-		joints[i,1] = int(index[0] / 128 * 256) # y
-		# joints[i,0] = int(index[1] / 128 * 1600) # x
-		# joints[i,1] = int(index[0] / 128 * 1200) # y
+		joints[i,0] = round(index[1] / 128 * 256) # x
+		joints[i,1] = round(index[0] / 128 * 256) # y
+		# joints[i,0] = round(index[1] / 128 * 1600) # x
+		# joints[i,1] = round(index[0] / 128 * 1200) # y
 
 	return joints
 
@@ -97,20 +97,20 @@ def maxpoint(hm1):
 	return np.unravel_index(hm1.argmax(), hm1.shape)
 
 def findJoints(hm8):
-	joints = np.zeros((8,2), dtype=int)
+	joints = np.zeros((9,2), dtype=int)
 
 	for i in range(8):
 		index = maxpoint(hm8[:,:,i])
 
-		# joints[i,0] = int(index[1] / 64 * 256) # x
-		# joints[i,1] = int(index[0] / 64 * 256) # y
-		# joints[i,0] = int(index[1] / 64 * 1600) # x
-		# joints[i,1] = int(index[0] / 64 * 1200) # y
+		# joints[i,0] = round(index[1] / 64 * 256) # x
+		# joints[i,1] = round(index[0] / 64 * 256) # y
+		# joints[i,0] = round(index[1] / 64 * 1600) # x
+		# joints[i,1] = round(index[0] / 64 * 1200) # y
 
-		joints[i,0] = int(index[1] / 128 * 256) # x
-		joints[i,1] = int(index[0] / 128 * 256) # y
-		# joints[i,0] = int(index[1] / 128 * 1600) # x
-		# joints[i,1] = int(index[0] / 128 * 1200) # y
+		joints[i,0] = round(index[1] / 128 * 256) # x
+		joints[i,1] = round(index[0] / 128 * 256) # y
+		# joints[i,0] = round(index[1] / 128 * 1600) # x
+		# joints[i,1] = round(index[0] / 128 * 1200) # y
 
 	return joints
 
@@ -125,14 +125,104 @@ def drawjoints(img, joints):
 	cv.circle(img, (joints[5][0],joints[5][1]), 3, (0,0,255), 1)
 	cv.circle(img, (joints[6][0],joints[6][1]), 3, (0,0,255), 1)
 	cv.circle(img, (joints[7][0],joints[7][1]), 3, (255,0,0), 1)
+	cv.circle(img, (joints[8][0],joints[8][1]), 3, (255,165,0), 1)
 
 	cv.line(img, (joints[0][0],joints[0][1]), (joints[7][0],joints[7][1]), (255,0,0), 1, cv.LINE_AA)
 	cv.line(img, (joints[1][0],joints[1][1]), (joints[2][0],joints[2][1]), (0,255,0), 1, cv.LINE_AA)
 	cv.line(img, (joints[1][0],joints[1][1]), (joints[3][0],joints[3][1]), (0,255,0), 1, cv.LINE_AA)
 	cv.line(img, (joints[4][0],joints[4][1]), (joints[5][0],joints[5][1]), (0,0,255), 1, cv.LINE_AA)
 	cv.line(img, (joints[4][0],joints[4][1]), (joints[6][0],joints[6][1]), (0,0,255), 1, cv.LINE_AA)
+	cv.line(img, (joints[2][0],joints[2][1]), (joints[8][0],joints[8][1]), (255,165,0), 1, cv.LINE_AA)
 
 	return img
+
+def vectcontour(hm):
+
+	hm /= np.max(hm)
+
+	w,h = (hm.shape)
+	x, y = np.mgrid[0:128, 0:128]
+
+	dy, dx = np.gradient(hm)
+
+	mag = (dy**2 + dx**2)**(0.5)
+	mag /= np.max(mag)
+
+	invmag = (mag - 1) * (-1)
+
+	peri = np.where(invmag + hm > 1.4, invmag, 0)
+	peri /= np.max(peri)
+
+	return peri
+
+def findperp(joints, peri):
+	# find equation of line for major segment
+	denom = (joints[7][1] - joints[0][1])
+	if denom == 0:
+		denom = 0.000000000001
+	m1 = (joints[7][0] - joints[0][0]) / denom
+	b1 = -m1 * joints[0][1] + joints[0][0]
+
+	# find line perpendicular to major segment
+	m2 = -1/m1
+	b2 = -m2 * joints[2][1] + joints[2][0]
+
+	# find intersection of both
+	n = b2 - b1
+	z = m1 - m2
+	if z == 0:
+		z = 0.000000000001
+	x = n/z
+	y = m2 * x + b2
+
+	x = round(x).astype(int)
+	y = round(y).astype(int)
+
+	# move away from source
+	dx = joints[2][1] - x
+	if dx < 0:
+		x += 1
+		dx = 1
+	else:
+		x += -1
+		dx = -1
+
+	dy = joints[2][0] - y
+	if dy < 0:
+		y += 1
+		dy = 1
+	else:
+		y += -1
+		dy = -1
+	# search till contact with perimeter to for minor segment
+	search = True
+	# print(np.max(peri))
+	# print([y,x])
+	while(search):
+		y2 = round(m2 * x + b2).astype(int)
+		x2 = round((y - b2)/ m2).astype(int)
+
+		if y == y2:
+			x += dx
+
+		elif x == x2:
+			y += dy
+
+		else:
+			x += dx
+			y += dy
+
+		if peri[x,y] > 0.5:
+			search = False
+			break
+		# print(peri[y,x])
+			
+	joints[8,0] = y
+	joints[8,1] = x
+
+	print(joints[8])
+	return joints
+
 
 images = np.zeros((10,256,256,3))
 allmeasures = []
@@ -155,17 +245,26 @@ for i in range(10):
 	# measure.append(0)
 	# measure.append(anglebetween(joints[2],joints[1],joints[3]))
 
-	img = drawjoints(img, joints)
 
 	cont = np.copy(hm[i,:,:,8])
-	cont[:][cont < .6] = 0
-	cont = Image.fromarray(cont)
-	cont = cont.resize((256,256), Image.ANTIALIAS)
-	cont = np.asarray(cont) * 255
+	peri = vectcontour(cont)
+	peri = Image.fromarray(peri)
+	peri = peri.resize((256,256), Image.ANTIALIAS)
+	peri = np.asarray(peri)
 
-	img[:,:,1] += cont
+	# plt.imshow(peri)
+	# plt.show()
+
+	img[:,:,1] = np.where(peri > .3, 255, img[:,:,1])
+	img[:,:,0] = np.where(peri > .3, 255, img[:,:,0])
+	img[:,:,2] = np.where(peri > .3, 0, img[:,:,2])
+
+	joints = findperp(joints, peri)
+
+	img = drawjoints(img, joints)
 
 	images[i] = np.copy(img)
+	# break
 
 	# plt.imshow(hm[i,:,:,8])
 	# plt.show()
