@@ -157,10 +157,13 @@ def vectcontour(hm):
 
 def findperp(joints, peri):
 	# find equation of line for major segment
+	inf = 0
 	denom = (joints[7][1] - joints[0][1])
 	if denom == 0:
 		denom = 0.000000000001
 	m1 = (joints[7][0] - joints[0][0]) / denom
+	if m1 == 0:
+		inf = 1
 	b1 = -m1 * joints[0][1] + joints[0][0]
 
 	# find line perpendicular to major segment
@@ -199,22 +202,32 @@ def findperp(joints, peri):
 	# print(np.max(peri))
 	# print([y,x])
 	while(search):
-		y2 = round(m2 * x + b2).astype(int)
-		x2 = round((y - b2)/ m2).astype(int)
+		# y2 = round(m2 * x + b2).astype(int)
+		# x2 = round((y - b2)/ m2).astype(int)
+		if inf == 0:
 
-		if y == y2:
-			x += dx
+			if abs(m2) <= 1:
+				y = round(m2 * x + b2).astype(int)
 
-		elif x == x2:
-			y += dy
+				if peri[x,y] > 0.5:
+					search = False
+					break
 
+				x += dx
+
+			else: 
+				x = round((y - b2)/ m2).astype(int)
+				if peri[x,y] > 0.5:
+					search = False
+					break
+
+				y += dy
 		else:
-			x += dx
+			if peri[x,y] > 0.5:
+				search = False
+				break
 			y += dy
 
-		if peri[x,y] > 0.5:
-			search = False
-			break
 		# print(peri[y,x])
 			
 	joints[8,0] = y
@@ -224,7 +237,9 @@ def findperp(joints, peri):
 	return joints
 
 
+
 images = np.zeros((10,256,256,3))
+# img = np.copy(imgdata[288])
 allmeasures = []
 for i in range(10):
 	measure = []
