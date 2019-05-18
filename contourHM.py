@@ -51,6 +51,7 @@ polygons = X.values.tolist()
 filenames = files.values.tolist()
 
 hm = np.zeros((len(polygons), nimg_h, nimg_w), dtype=np.float32)
+# print(hm.shape)
 for z in range(len(polygons)):
 
     poly = polygons[z]
@@ -117,7 +118,7 @@ for z in range(len(polygons)):
     # plt.savefig("./contours/id" + filenames[z][0])
     # plt.show()
 
-    sigma = 2
+    sigma = 3
     var = np.zeros((nimg_h, nimg_w), dtype=np.float32)
     hms = np.zeros((nimg_h, nimg_w), dtype=np.float32)
 
@@ -126,21 +127,21 @@ for z in range(len(polygons)):
         x0 = contourList[i][0]
 
         var = pow(np.e, (-((xmap-x0)**2 + (ymap-y0)**2)/(2*sigma*sigma))) / (math.sqrt(2*np.pi)*sigma)
-        hms[:][hms < var] = var[hms < var]
+        hms = np.where(hms < var, var, hms)
+        # hms[:][hms < var] = var[hms < var]
 
     hm[z] = np.copy(normalize(hms))
 
     # visualize in image
     # hm[z] *= 255
 
-    # plt.imshow(var)
-    # plt.imshow(hm[z])
-    # plt.show()
+    plt.imshow(hm[z])
+    plt.show()
 
     # finished = wingImage + hm[z]
     # plt.imshow(finished)
     # plt.show()
-    # break
+    break
 
-    print(z)
-np.save("contourHM_128_s2", hm)
+    # print(z)
+# np.save("contourHM_128_s3", hm)

@@ -22,8 +22,8 @@ def toSmall(points):
 
 	for k in range(len(points)):
 		for i in range(0,16,2):
-			points[k][i] = int(points[k][i]/oimg_h * nimg_h)
-			points[k][i+1] = int(points[k][i+1]/oimg_w * nimg_w)
+			points[k][i] = round(points[k][i]/oimg_h * nimg_h)
+			points[k][i+1] = round(points[k][i+1]/oimg_w * nimg_w)
 
 	return points
 
@@ -31,8 +31,8 @@ def toOrig(points):
 
 	for k in range(len(points)):
 		for i in range(0,16,2):
-			points[k][i] = int(points[k][i]/nimg_h * oimg_h)
-			points[k][i+1] = int(points[k][i+1]/nimg_w * oimg_w)
+			points[k][i] = round(points[k][i]/nimg_h * oimg_h)
+			points[k][i+1] = round(points[k][i+1]/nimg_w * oimg_w)
 
 	return points
 
@@ -303,6 +303,7 @@ with tf.Session(graph=graph) as sess:
         for j in range(7):
             ehm += (sample[0,:,:,j] + 1) / 2
 
+          
         ehm *= 255
         plt.imshow(simg[0])
         plt.show()
