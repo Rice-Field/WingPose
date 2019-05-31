@@ -14,7 +14,7 @@ Decompose measurements into (X,Y) points of the image
 
 From: Old Measurements | To: A Contour and 9 Points of Interest
 :------------------------:|:-----------------------:
-<img src="images/measure.png" style="width:350px;height:120px;">  |  <img src="images/wingpose.png" style="width:300px;height:150px;">
+<img src="images/measure.png" style="width:300px;height:120px;">  |  <img src="images/wingpose.png" style="width:300px;height:150px;">
 
 ## Labeling Steps
 
@@ -33,7 +33,7 @@ When done with all contours for a file go to file -> save -> COCO JSON
 
 Contour |
 :------------------------:|
-<img src="images/contour.png" style="width:350px;height:150px;"> |
+<img src="images/contour.png" style="width:250px;height:150px;"> |
 
 ### 3. Points of interest
 If a contour was not created draw a rectangle around the object to create points
@@ -45,7 +45,7 @@ When done with all points for folder go to file -> save -> Dlib XML
 
 Points |
 :------------------------:|
-<img src="images/newpoints.PNG" style="width:650px;height:350px;"> |
+<img src="images/newpoints.PNG" style="width:550px;height:350px;"> |
 
 If you ever want to continue working on a folder file -> save -> Project file
 Then load by
