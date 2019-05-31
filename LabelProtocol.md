@@ -1,8 +1,6 @@
 # Labeling Protocol
 By Jonathon Rice
 
-If you ever need guidance ask Natasha
-
 ## Website: https://imglab.ml
 Any other platform is acceptable as long as the image (X,Y) coordinates are saved
 
