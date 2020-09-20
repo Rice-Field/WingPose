@@ -13,7 +13,7 @@ We apply gaussian smoothing to both keypoints and the contour for heatmap traini
 To retrieve a sharp contour we calculate the gradient vector field of the output heatmap.
 <img src="images/gradient_field.png" alt="drawing" width="700"/>
 
-### Model Output
+### Final Output
 <img src="images/output3.png" alt="drawing" width="500"/>
 
 ## Dataset
