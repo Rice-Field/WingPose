@@ -2,7 +2,6 @@
 Pose estimation of mosquito wings with deep learning. Using an autoencoder architecture, heatmaps can be generated from the image to give the location of keypoints and contour used in the measurement of wings.
 
 ### Desired measurements
-
 <img src="images/measure.png" alt="drawing" width="500"/>
 
 ### Keypoint Detection
@@ -17,7 +16,7 @@ To retrieve a sharp contour we calculate the gradient vector field of the output
 <img src="images/output3.png" alt="drawing" width="500"/>
 
 ## Dataset
-The dataset was created from a lab interested in the development of adult mosquitos. Currently 8 x,y coordinate values are used for the dataset. In the future the perimeter or area of the wing will be included as a contour or object pixel classification. A link to the set of images will be included shortly.
+The dataset was created from a lab interested in the development of adult mosquitos. Currently 8 x,y coordinate values and contour coordinates are used for the dataset. Each point and contour is assigned its own channel in the heatmap output, totaling to 9 channels.
 
 #### Order of keypoints
 <img src="images/newpoints.PNG" alt="drawing" width="700"/>
