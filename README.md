@@ -6,15 +6,15 @@ Pose estimation of mosquito wings with deep learning. Using an autoencoder archi
 <img src="images/measure.png" alt="drawing" width="500"/>
 
 ### Keypoint Detection
-
+We apply gaussian smoothing to both keypoints and the contour for heatmap training.
 ![Keypoint](images/5prototype_img1.png)
 
 ### Contour Detection
-We calculate the gradient vector field of the output heatmap to retrieve a sharp contour.
-<img src="images/gradient_field.png" alt="drawing" width="750"/>
+To retrieve a sharp contour we calculate the gradient vector field of the output heatmap.
+<img src="images/gradient_field.png" alt="drawing" width="700"/>
 
 ### Model Output
-<img src="images/output2.png" alt="drawing" width="500"/>
+<img src="images/output3.png" alt="drawing" width="500"/>
 
 ## Dataset
 The dataset was created from a lab interested in the development of adult mosquitos. Currently 8 x,y coordinate values are used for the dataset. In the future the perimeter or area of the wing will be included as a contour or object pixel classification. A link to the set of images will be included shortly.
@@ -23,8 +23,6 @@ The dataset was created from a lab interested in the development of adult mosqui
 <img src="images/newpoints.PNG" alt="drawing" width="700"/>
 
 #### Contour annotation
-We apply gaussian smoothing during training for heatmap generation.
-
 <img src="images/Figure_2-2.png" alt="drawing" width="300"/>
 
 ## Steps
